@@ -11,7 +11,7 @@ static const unsigned int Threshold = 180;
 using namespace std;
 using namespace cv;
 
-image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
+//image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
 
 int* countBlackPixs(Mat inputImage)
 {
@@ -63,9 +63,47 @@ Mat rotate90(Mat inputImage)
 	return outputImage;
 }
 
-Mat drawChart(Mat inputImage)
+Mat drawChart(Mat inputImage, int *countedBlacks, int cols)
 {
-	
+	Mat outputImage;
+	Mat plotResult;
+	//image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
+
+	//Ptr<plot::Plot2d> plot;
+	//plot = plot::createPlot2d(data);
+	//plot->render(plot_result);
+
+	outputImage.ones(inputImage.cols, inputImage.rows, CV_8UC3);
+
+	for(int y=0;y<outputImage.rows;y++)
+	{
+	    for(int x=0;x<outputImage.cols;x++)
+	    {
+		// get pixel
+		//Vec3b color = input.at<Vec3b>(Point(x,y));
+
+		// ... do something to the color ....
+
+		// set pixel
+/*		if()
+		{
+			outputImage.at<Vec3b>(Point(x,y)) = 0;
+		}
+		else
+		{
+			outputImage.at<Vec3b>(Point(x,y)) = 255;
+		}*/
+	    }
+	}
+	//-------------------------------//
+	//     fill your data here
+	//-------------------------------//
+/*
+	Ptr<plot::Plot2d> plot;
+	plot = plot::createPlot2d(outputImage);
+	plot->render(plotResult);
+*/
+	return plotResult;
 }
 
 int main()
@@ -92,14 +130,19 @@ int main()
 	//convert to binary
 	image = convertToBinary(image);
 
-	//display image
-	namedWindow(windowName, CV_WINDOW_NORMAL);
-	imshow(windowName, image);
 
 	countedBlacks = countBlackPixs(image);
 
 	for(int i = 0; i < image.cols; i++)
 		cout << "col=" << i << " ,val=" << countedBlacks[i] << endl;
+
+	//display chart
+	image = drawChart(image, countedBlacks, image.cols);
+
+	//display image
+	namedWindow(windowName, CV_WINDOW_NORMAL);
+	imshow(windowName, image);
+
 
 	while(true)
 	{
