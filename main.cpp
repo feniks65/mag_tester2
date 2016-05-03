@@ -13,6 +13,7 @@ using namespace cv;
 
 //image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
 
+
 int* countBlackPixs(Mat inputImage)
 {
 	int *countedBlacks = new int[inputImage.cols];
@@ -65,50 +66,34 @@ Mat rotate90(Mat inputImage)
 
 Mat drawChart(Mat inputImage, int *countedBlacks, int cols)
 {
+	//Mat outputImage = inputImage.clone();
 	Mat outputImage;
-	Mat plotResult;
-	//image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
+	inputImage.copyTo(outputImage);
 
-	//Ptr<plot::Plot2d> plot;
-	//plot = plot::createPlot2d(data);
-	//plot->render(plot_result);
+	cout << "outputImage.cols=" << outputImage.cols << ", outputImage.rows=" << outputImage.rows << endl;
 
-	outputImage.ones(inputImage.cols, inputImage.rows, CV_8UC3);
-
-	for(int y=0;y<outputImage.rows;y++)
+	for(int i =0; i < outputImage.cols; i++)
 	{
-	    for(int x=0;x<outputImage.cols;x++)
-	    {
-		// get pixel
-		//Vec3b color = input.at<Vec3b>(Point(x,y));
-
-		// ... do something to the color ....
-
-		// set pixel
-/*		if()
+		for(int j = 0; j < outputImage.rows; j++)
 		{
-			outputImage.at<Vec3b>(Point(x,y)) = 0;
+			if(countedBlacks[i] == outputImage.rows - j)
+				outputImage.at<uchar>(j, i) = 0;
+			else
+				outputImage.at<uchar>(j, i) = 255;
+			//outputImage.at<>(j, i) = 0;
+			//outputImage.at<Vec3b>(j, i)[2] = 0;
 		}
-		else
-		{
-			outputImage.at<Vec3b>(Point(x,y)) = 255;
-		}*/
-	    }
 	}
-	//-------------------------------//
-	//     fill your data here
-	//-------------------------------//
-/*
-	Ptr<plot::Plot2d> plot;
-	plot = plot::createPlot2d(outputImage);
-	plot->render(plotResult);
-*/
-	return plotResult;
+
+	outputImage.t();
+	outputImage.t();
+
+	return outputImage;
 }
 
-int main()
+int main(int argc, char **argv)
 {
-	const char *exampleSample = "../mag_tester/probki/SkanyRazem/dokument004.jpg";
+	const char *exampleSample = "../mag_tester/probki/SkanyRazem/dokument048.jpg";
 	const char *windowName = "probka";
 	struct stat sb;
 	Mat image;
@@ -134,7 +119,7 @@ int main()
 	countedBlacks = countBlackPixs(image);
 
 	for(int i = 0; i < image.cols; i++)
-		cout << "col=" << i << " ,val=" << countedBlacks[i] << endl;
+		cout << "" << i << ";" << countedBlacks[i] << ";" <<endl;
 
 	//display chart
 	image = drawChart(image, countedBlacks, image.cols);
