@@ -24,8 +24,26 @@ def findpeaks(yy):
 	return peaks
 
 def sortElementAndCutEdges(input):
-	input.sort()
+	average = (sum(input)/len(input))
 
+	for value in input:
+		if average > (2 * value) or average < (0.2 * value):
+			while True:
+				try:
+					input.remove(value)
+				except:
+					break
+	return input
+
+def getXsForForYs(input):
+	output = list()
+	counter = 1
+	for value in input:
+		output.append(counter)
+		counter++
+	return output
+
+#main code
 
 xx = list()
 yy = list()
