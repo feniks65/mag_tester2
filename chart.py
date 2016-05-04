@@ -4,6 +4,7 @@ import csv
 import sys
 import matplotlib.pyplot as plt
 import numpy
+import peakutils
 
 from scipy.signal import find_peaks_cwt
 
@@ -17,9 +18,14 @@ def findpeaks(yy):
 	print cb.shape
 	#print numpy.arange(0, 3500).shape
 	print cb
-	peaks = find_peaks_cwt(cb, numpy.arange(1, 100))
+	peaks = peakutils.indexes(cb, thres=0.00005 * max(cb), min_dist=100)
+	#peaks = find_peaks_cwt(cb, numpy.arange(1, 100))
 
 	return peaks
+
+def sortElementAndCutEdges(input):
+	input.sort()
+
 
 xx = list()
 yy = list()
@@ -41,7 +47,6 @@ pksy = list()
 for value in pks:
     pksy.append(yy[value])
        
-maxelement = 
 print findpeaks(yy)
 
 plt.plot(xx, yy)
@@ -51,3 +56,5 @@ plt.plot(xx, yy)
 
 plt.plot(pks, pksy, 'ro')
 plt.show()
+
+print "Number of peaks found=", len(pks)
