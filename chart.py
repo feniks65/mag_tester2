@@ -62,10 +62,11 @@ pks = findpeaks(yy)
 
 pksy = list()
 
-for value in pks:
-    pksy.append(yy[value])
+pks = sortElementAndCutEdges(pks)
+
+pksy = getXsForForYs(pks)
        
-print findpeaks(yy)
+#print findpeaks(yy)
 
 plt.plot(xx, yy)
 plt.ylabel('Number of black pixels in each column')
