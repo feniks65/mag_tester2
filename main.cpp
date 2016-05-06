@@ -13,6 +13,46 @@ using namespace cv;
 
 //image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
 
+void* cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
+{
+	//firstly I need to draw as much rectangles as numOfPieces
+	rectangles = new Mat[numOfPieces];
+
+//Rect(int x, int y, int width, int height) ---> starts from top left corner
+
+	int width = input.cols;
+	int height = input.rows;
+
+	int rectangleWidth = input.cols / numOfPieces;
+	int rectangleHeight = input.rows; // heigh of the input image
+
+	int newRectXPosition = 0;
+	for(int i = 0; i < numOfPieces; i++)
+	{
+		Rect newRect(newRectXPosition, 0, rectangleWidth, rectangleHeight);
+		Mat croppedRef(input, newRect);
+		croppedRef.copyTo(rectangles[i]);
+	}
+
+	//return rectangles;
+
+//cv::Mat source = getYourSource();
+
+// Setup a rectangle to define your region of interest
+
+//cv::Rect myROI(10, 10, 100, 100);
+
+// Crop the full image to that image contained by the rectangle myROI
+// Note that this doesn't copy the data
+
+//cv::Mat croppedRef(source, myROI);
+
+//cv::Mat cropped;
+
+// Copy the data into new matrix
+
+//croppedRef.copyTo(cropped);
+}
 
 int* countBlackPixs(Mat inputImage)
 {
@@ -98,6 +138,8 @@ int main(int argc, char **argv)
 	struct stat sb;
 	Mat image;
 	int *countedBlacks = NULL;
+	int numOfPieces = 4;
+	Mat *rectangles;
 
 	if(stat(exampleSample, &sb) == -1)
 	{
@@ -106,27 +148,29 @@ int main(int argc, char **argv)
 
 	image = imread(exampleSample, 1);
 
+	cropImageIntoPieces(rectangles, image, numOfPieces);
+
 	//convert to grayscale
-	image = convertToGrayScale(image);
+	rectangles[0] = convertToGrayScale(image);
 
 	//rotate90
-	image = rotate90(image);
+	rectangles[0] = rotate90(rectangles[0]);
 
 	//convert to binary
-	image = convertToBinary(image);
+	rectangles[0] = convertToBinary(rectangles[0]);
 
 
-	countedBlacks = countBlackPixs(image);
+	countedBlacks = countBlackPixs(rectangles[0]);
 
-	for(int i = 0; i < image.cols; i++)
+	for(int i = 0; i < rectangles[0].cols; i++)
 		cout << "" << i << ";" << countedBlacks[i] << ";" <<endl;
 
 	//display chart
-	image = drawChart(image, countedBlacks, image.cols);
+	rectangles[0] = drawChart(rectangles[0], countedBlacks, rectangles[0].cols);
 
 	//display image
 	namedWindow(windowName, CV_WINDOW_NORMAL);
-	imshow(windowName, image);
+	imshow(windowName, rectangles[0]);
 
 
 	while(true)
