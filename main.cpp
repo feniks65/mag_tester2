@@ -13,7 +13,7 @@ using namespace cv;
 
 //image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
 
-void* cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
+void cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 {
 	//firstly I need to draw as much rectangles as numOfPieces
 	rectangles = new Mat[numOfPieces];
@@ -21,14 +21,20 @@ void* cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 //Rect(int x, int y, int width, int height) ---> starts from top left corner
 
 	int width = input.cols;
+	cout << "width=" << width << endl;
 	int height = input.rows;
+	cout << "height=" << height << endl;
 
 	int rectangleWidth = input.cols / numOfPieces;
+	cout << "rectangleWidth=" << rectangleWidth << endl;
 	int rectangleHeight = input.rows; // heigh of the input image
+	cout << "rectangleHeight=" << rectangleHeight << endl;
 
 	int newRectXPosition = 0;
-	for(int i = 0; i < numOfPieces; i++)
+	for(int i = 0; i < (numOfPieces-1); i++)
 	{
+		newRectXPosition = i * rectangleWidth;
+		cout << "newRectXPosition=" << newRectXPosition << endl;
 		Rect newRect(newRectXPosition, 0, rectangleWidth, rectangleHeight);
 		Mat croppedRef(input, newRect);
 		croppedRef.copyTo(rectangles[i]);
