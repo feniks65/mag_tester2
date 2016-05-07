@@ -2,6 +2,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -11,12 +12,14 @@ static const unsigned int Threshold = 180;
 using namespace std;
 using namespace cv;
 
+Mat *rectangles;
+
 //image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
 
 void cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 {
 	//firstly I need to draw as much rectangles as numOfPieces
-	rectangles = new Mat[numOfPieces];
+	//rectangles = new Mat[numOfPieces];
 
 //Rect(int x, int y, int width, int height) ---> starts from top left corner
 
@@ -39,12 +42,24 @@ void cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 	int newRectXPosition = 0;
 	for(int i = 0; i < numOfPieces; i++)
 	{
-		newRectXPosition = i * rectangleWidth;
 		cout << "newRectXPosition=" << newRectXPosition << endl;
 		Rect newRect(newRectXPosition, 0, rectangleWidth, rectangleHeight);
 		Mat croppedRef(input, newRect);
 		croppedRef.copyTo(rectangles[i]);
+		newRectXPosition += rectangleWidth;
 	}
+
+	// namedWindow("windowName", CV_WINDOW_NORMAL);
+	// imshow("windowName", rectangles[3]);
+
+
+	// while(true)
+	// {
+	// 	int c;
+	// 	c = waitKey(20);
+	// 	if((char)c == 27)
+	// 		break;
+	// }
 
 	//return rectangles;
 
@@ -153,6 +168,8 @@ int main(int argc, char **argv)
 	int numOfPieces = 4;
 	Mat *rectangles;
 
+	rectangles = new Mat[numOfPieces]; 
+
 	if(stat(exampleSample, &sb) == -1)
 	{
 		cout << "File " << exampleSample << " cannot be accessed!";
@@ -162,28 +179,34 @@ int main(int argc, char **argv)
 
 	cropImageIntoPieces(rectangles, image, numOfPieces);
 
-	//convert to grayscale
-	rectangles[0] = convertToGrayScale(image);
+	for(int j = 0; j < numOfPieces; j++)
+	{
+		ofstream outputFile;
+		outputFile.open("mainOutput");
 
-	//rotate90
-	rectangles[0] = rotate90(rectangles[0]);
+		//convert to grayscale
+		rectangles[j] = convertToGrayScale(image);
 
-	//convert to binary
-	rectangles[0] = convertToBinary(rectangles[0]);
+		//rotate90
+		rectangles[j] = rotate90(rectangles[j]);
+
+		//convert to binary
+		rectangles[j] = convertToBinary(rectangles[j]);
 
 
-	countedBlacks = countBlackPixs(rectangles[0]);
+		countedBlacks = countBlackPixs(rectangles[j]);
 
-	for(int i = 0; i < rectangles[0].cols; i++)
-		cout << "" << i << ";" << countedBlacks[i] << ";" <<endl;
+		for(int i = 0; i < rectangles[j].cols; i++)
+			outputFile << "" << i << ";" << countedBlacks[i] << ";" <<endl;
+		outputFile.close();
+	}
 
 	//display chart
-	rectangles[0] = drawChart(rectangles[0], countedBlacks, rectangles[0].cols);
+	//rectangles[0] = drawChart(rectangles[0], countedBlacks, rectangles[0].cols);
 
 	//display image
 	namedWindow(windowName, CV_WINDOW_NORMAL);
 	imshow(windowName, rectangles[0]);
-
 
 	while(true)
 	{
@@ -192,6 +215,10 @@ int main(int argc, char **argv)
 		if((char)c == 27)
 			break;
 	}
+
+delete[] rectangles;
+
+
 
 	return 0;
 }
