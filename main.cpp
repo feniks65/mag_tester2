@@ -21,17 +21,23 @@ void cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 //Rect(int x, int y, int width, int height) ---> starts from top left corner
 
 	int width = input.cols;
+
 	cout << "width=" << width << endl;
+
 	int height = input.rows;
+
 	cout << "height=" << height << endl;
 
 	int rectangleWidth = input.cols / numOfPieces;
+
 	cout << "rectangleWidth=" << rectangleWidth << endl;
+
 	int rectangleHeight = input.rows; // heigh of the input image
+
 	cout << "rectangleHeight=" << rectangleHeight << endl;
 
 	int newRectXPosition = 0;
-	for(int i = 0; i < (numOfPieces-1); i++)
+	for(int i = 0; i < numOfPieces; i++)
 	{
 		newRectXPosition = i * rectangleWidth;
 		cout << "newRectXPosition=" << newRectXPosition << endl;
