@@ -6,6 +6,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string>
 
 static const unsigned int Threshold = 180;
 
@@ -160,13 +162,21 @@ Mat drawChart(Mat inputImage, int *countedBlacks, int cols)
 
 int main(int argc, char **argv)
 {
-	const char *exampleSample = "../mag_tester/probki/SkanyRazem/dokument048.jpg";
+	if(argc < 2)
+	{
+		cout << endl << "Too less arguments!!!" << endl;
+		cout << endl << "e.g. ./tester <filename> <numOfPieces>" << endl << endl;
+		return 1;
+	}
+
+	const char *exampleSample = argv[1];//"../mag_tester/probki/SkanyRazem/dokument048.jpg";
 	const char *windowName = "probka";
 	struct stat sb;
 	Mat image;
 	int *countedBlacks = NULL;
-	int numOfPieces = 4;
+	int numOfPieces = atoi(argv[2]);
 	Mat *rectangles;
+	string sysCmd = "python chart.py mainOutput";
 
 	rectangles = new Mat[numOfPieces]; 
 
@@ -182,10 +192,10 @@ int main(int argc, char **argv)
 	for(int j = 0; j < numOfPieces; j++)
 	{
 		ofstream outputFile;
-		outputFile.open("mainOutput");
+		outputFile.open("mainOutput" + to_string(j), ios::out | ios::trunc);
 
 		//convert to grayscale
-		rectangles[j] = convertToGrayScale(image);
+		rectangles[j] = convertToGrayScale(rectangles[j]);
 
 		//rotate90
 		rectangles[j] = rotate90(rectangles[j]);
@@ -199,7 +209,11 @@ int main(int argc, char **argv)
 		for(int i = 0; i < rectangles[j].cols; i++)
 			outputFile << "" << i << ";" << countedBlacks[i] << ";" <<endl;
 		outputFile.close();
+
+		system((sysCmd + to_string(j)).c_str());
 	}
+
+system("rm mainOutput*");
 
 	//display chart
 	//rectangles[0] = drawChart(rectangles[0], countedBlacks, rectangles[0].cols);

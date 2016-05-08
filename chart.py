@@ -72,7 +72,7 @@ pksy = getXsForForYs(pks)
 plt.plot(xx, yy)
 plt.ylabel('Number of black pixels in each column')
 plt.xlabel('Columns')
-plt.plot(xx, yy)
+#plt.plot(xx, yy)
 
 plt.plot(pks, pksy, 'ro')
 plt.show()
