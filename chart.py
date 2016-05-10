@@ -23,25 +23,33 @@ def findpeaks(yy):
 
 	return peaks
 
-def sortElementAndCutEdges(input):
+def cutEdgeElements(input):
+	output = list()
 	average = (sum(input)/len(input))
 	print "average=",average
 
 	for value in input:
 		if average > (2 * value) or average < (0.2 * value):
-			while True:
-				try:
-					input.remove(value)
-				except:
-					break
-	return input
+			pass
+		else:
+			output.append(value)
+
+	return output
 
 def getXsForForYs(input):
 	output = list()
-	counter = 1
+	counter = 0
 	for value in input:
 		output.append(counter)
 		counter += 1
+	return output
+
+def getYsForIndexes(indexes, yy):
+	output = list()
+
+	for value in indexes:
+		output.append(yy[value])
+
 	return output
 
 #main code
@@ -61,20 +69,21 @@ with open(sys.argv[1], 'rb') as f:
 
 pks = findpeaks(yy)
 
-pksy = list()
+pksX = list()
 
-pks = sortElementAndCutEdges(pks)
+#pks = cutEdgeElements(pks)
 
-pksy = getXsForForYs(pks)
-       
+pksX = getXsForForYs(pks)
+
+pksY = getYsForIndexes(pks, yy)
+
 #print findpeaks(yy)
 
 plt.plot(xx, yy)
 plt.ylabel('Number of black pixels in each column')
 plt.xlabel('Columns')
-#plt.plot(xx, yy)
 
-plt.plot(pks, pksy, 'ro')
+plt.plot(pks, pksY, 'ro')
 plt.show()
 
 print "Number of peaks found=", len(pks)
