@@ -36,14 +36,6 @@ def cutEdgeElements(input):
 
 	return output
 
-def getXsForYs(input):
-	output = list()
-	counter = 0
-	for value in input:
-		output.append(counter)
-		counter += 1
-	return output
-
 def getYsForIndexes(indexes, yy):
 	output = list()
 
@@ -67,16 +59,13 @@ with open(sys.argv[1], 'rb') as f:
 
 #plt.plot([xx], [yy])
 
-pks = findpeaks(yy)
+filteredYs = cutEdgeElements(yy)
 
-pksX = list()
+pks = findpeaks(filteredYs)
 
-#for removal
-pksX = getXsForYs(pks)
+pksY = getYsForIndexes(pks, filteredYs)
 
-pksY = getYsForIndexes(pks, yy)
-
-filteredPksYs = cutEdgeElements(pksY)
+#filteredPksYs = cutEdgeElements(pksY)
 #filteredPksXs = 
 
 plt.plot(xx, yy)
