@@ -36,7 +36,7 @@ def cutEdgeElements(input):
 
 	return output
 
-def getXsForForYs(input):
+def getXsForYs(input):
 	output = list()
 	counter = 0
 	for value in input:
@@ -71,13 +71,13 @@ pks = findpeaks(yy)
 
 pksX = list()
 
-#pks = cutEdgeElements(pks)
-
-pksX = getXsForForYs(pks)
+#for removal
+pksX = getXsForYs(pks)
 
 pksY = getYsForIndexes(pks, yy)
 
-#print findpeaks(yy)
+filteredPksYs = cutEdgeElements(pksY)
+#filteredPksXs = 
 
 plt.plot(xx, yy)
 plt.ylabel('Number of black pixels in each column')
