@@ -23,18 +23,11 @@ def findpeaks(yy):
 
 	return peaks
 
-def cutEdgeElements(input):
-	output = list()
-	average = (sum(input)/len(input))
-	print "average=",average
-
-	for value in input:
-		if average > (2 * value) or average < (0.2 * value):
-			pass
-		else:
-			output.append(value)
-
-	return output
+def cutEdgeElements(average, peaksIndexes, yy):
+	it = np.nditer(peaksIndexes, flags=['f_index'])
+	for value in peaksIndexes:
+		if yy[value] > (1.4 * average) or yy[value] < (0.6 * average):
+			peaksIndexes = numpy.delete(peaksIndexes, it.index)
 
 def getYsForIndexes(indexes, yy):
 	output = list()
@@ -43,6 +36,14 @@ def getYsForIndexes(indexes, yy):
 		output.append(yy[value])
 
 	return output
+
+def averageOfPeaks(peaksIndexes, yy):
+	average = 0
+	for index in peaksIndexes:
+		average += yy[index]
+
+	average = average / len(peaksIndexes)
+	return average
 
 #main code
 
@@ -59,11 +60,15 @@ with open(sys.argv[1], 'rb') as f:
 
 #plt.plot([xx], [yy])
 
-filteredYs = cutEdgeElements(yy)
+#filteredYs = cutEdgeElements(yy)
 
-pks = findpeaks(filteredYs)
+pks = findpeaks(yy)
 
-pksY = getYsForIndexes(pks, filteredYs)
+peak_average = averageOfPeaks(pks, yy)
+#
+cutEdgeElements(peak_average, pks, yy)
+
+#pksY = getYsForIndexes(pks, filteredYs)
 
 #filteredPksYs = cutEdgeElements(pksY)
 #filteredPksXs = 
@@ -72,7 +77,11 @@ plt.plot(xx, yy)
 plt.ylabel('Number of black pixels in each column')
 plt.xlabel('Columns')
 
-plt.plot(pks, pksY, 'ro')
+#drawing dots
+for index in pks:
+	plt.plot(index, yy[index], 'ro')
+
+
 plt.show()
 
 print "Number of peaks found=", len(pks)
