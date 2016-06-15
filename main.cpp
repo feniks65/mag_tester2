@@ -169,6 +169,8 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	system("rm foundPeaks.txt");
+
 	const char *exampleSample = argv[1];//"../mag_tester/probki/SkanyRazem/dokument048.jpg";
 	const char *windowName = "probka";
 	struct stat sb;
@@ -219,20 +221,42 @@ system("rm mainOutput*");
 	//rectangles[0] = drawChart(rectangles[0], countedBlacks, rectangles[0].cols);
 
 	//display image
-	namedWindow(windowName, CV_WINDOW_NORMAL);
-	imshow(windowName, rectangles[0]);
+	// namedWindow(windowName, CV_WINDOW_NORMAL);
+	// imshow(windowName, rectangles[0]);
 
-	while(true)
+	// while(true)
+	// {
+	// 	int c;
+	// 	c = waitKey(20);
+	// 	if((char)c == 27)
+	// 		break;
+	// }
+
+ifstream infile("foundPeaks.txt");
+
+//int *peaks = new int[numOfPieces];
+int peaks[numOfPieces][numOfPieces];
+
+int peaksNum = 0;
+
+
+int counter = 0;
+while (infile >> peakNum )
+{
+	peaks[i] = peakNum;
+	counter++;
+}
+
+
+for(int i = 0; i < numOfPieces; i++)
+{
+	for(int j = 0; j < numOfPieces; j++)
 	{
-		int c;
-		c = waitKey(20);
-		if((char)c == 27)
-			break;
+		
 	}
+}
 
 delete[] rectangles;
-
-
 
 	return 0;
 }

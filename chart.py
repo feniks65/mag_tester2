@@ -21,13 +21,25 @@ def findpeaks(yy):
 	peaks = peakutils.indexes(cb, thres=0.00005 * max(cb), min_dist=100)
 	#peaks = find_peaks_cwt(cb, numpy.arange(1, 100))
 
+	print "PEAKS=",peaks
+
 	return peaks
 
 def cutEdgeElements(average, peaksIndexes, yy):
-	it = np.nditer(peaksIndexes, flags=['f_index'])
+	counter = 0
+
+	print "PEAKSlen=",len(peaksIndexes)
+
+
 	for value in peaksIndexes:
-		if yy[value] > (1.4 * average) or yy[value] < (0.6 * average):
-			peaksIndexes = numpy.delete(peaksIndexes, it.index)
+		print "counter=",counter," value=",value," average=",average," yy[value]=",yy[value]
+
+		if yy[value] > (1.9 * average) or yy[value] < (0.2 * average):
+			peaksIndexes = numpy.delete(peaksIndexes, counter)
+			print "DELETED"
+		else:
+			counter = counter + 1
+	return peaksIndexes
 
 def getYsForIndexes(indexes, yy):
 	output = list()
@@ -66,7 +78,7 @@ pks = findpeaks(yy)
 
 peak_average = averageOfPeaks(pks, yy)
 #
-cutEdgeElements(peak_average, pks, yy)
+pks = cutEdgeElements(peak_average, pks, yy)
 
 #pksY = getYsForIndexes(pks, filteredYs)
 
@@ -77,6 +89,9 @@ plt.plot(xx, yy)
 plt.ylabel('Number of black pixels in each column')
 plt.xlabel('Columns')
 
+print "PKS=",pks
+print "Liczba pksow=",len(pks)
+
 #drawing dots
 for index in pks:
 	plt.plot(index, yy[index], 'ro')
@@ -85,3 +100,10 @@ for index in pks:
 plt.show()
 
 print "Number of peaks found=", len(pks)
+
+f = open("foundPeaks.txt", "a")
+
+stringToFile = str(len(pks))+"\n"
+
+f.write(stringToFile)      # str() converts to string
+f.close()
