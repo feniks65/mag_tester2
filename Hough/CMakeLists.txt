@@ -19,7 +19,7 @@ endif()
 include_directories(/opt/local/include)
 link_directories (/opt/local/lib /usr/local/lib)
 
-ADD_EXECUTABLE(tester main.cpp)
+ADD_EXECUTABLE(tester hough.cpp)
 TARGET_LINK_LIBRARIES(tester
 		opencv_core
 		opencv_imgproc

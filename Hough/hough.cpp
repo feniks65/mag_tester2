@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string>
 
-static const unsigned int Threshold = 180;
+static const unsigned int Threshold = 240;
 
 using namespace std;
 using namespace cv;
@@ -118,8 +118,15 @@ Mat convertToBinary(Mat inputImage)
 Mat blur(Mat inputImage)
 {
 	Mat outputImage;
+	Mat outputImage2;
 
-	blur(inputImage, outputImage, Size(50, 50));
+	blur(inputImage, outputImage, Size(10, 10));
+
+	//Mat sub_mat = Mat::ones(inputImage.size(), inputImage.type())*255;
+ 
+    //subtract the original matrix by sub_mat to give the negative output new_image
+    //subtract(sub_mat, outputImage, outputImage2);
+	//cvNot(outputImage,outputImage2);
 
 	return outputImage;
 }
@@ -162,101 +169,72 @@ Mat drawChart(Mat inputImage, int *countedBlacks, int cols)
 
 int main(int argc, char **argv)
 {
-	if(argc < 2)
+	if(argc < 1)
 	{
 		cout << endl << "Too less arguments!!!" << endl;
-		cout << endl << "e.g. ./tester <filename> <numOfPieces>" << endl << endl;
+		cout << endl << "e.g. ./tester <filename>" << endl << endl;
 		return 1;
 	}
 
-	system("rm foundPeaks.txt");
-
-	const char *exampleSample = argv[1];//"../mag_tester/probki/SkanyRazem/dokument048.jpg";
+	Mat image1;
+	const char *exampleSample = argv[1];
 	const char *windowName = "probka";
-	struct stat sb;
-	Mat image;
-	int *countedBlacks = NULL;
-	int numOfPieces = atoi(argv[2]);
-	Mat *rectangles;
-	string sysCmd = "python chart.py mainOutput";
+	namedWindow(windowName, CV_WINDOW_NORMAL);
 
-	rectangles = new Mat[numOfPieces]; 
+	image1 = imread(exampleSample, 1);
 
-	if(stat(exampleSample, &sb) == -1)
+	image1 = convertToGrayScale(image1);
+
+	imwrite("convertedToGrayscale.jpg", image1);
+
+	image1 = blur(image1);
+
+	imwrite("blurredImage.jpg", image1);
+
+	//image1 = convertToGrayScale(image1);
+
+	image1 = convertToBinary(image1);
+
+	imwrite("convertedToBinary.jpg", image1);
+
+	Mat dst, image;
+ Canny(image1, image, 50, 200, 3);
+ cvtColor(image, dst, CV_GRAY2BGR);
+
+ image = rotate90(image);
+
+	vector<Vec4i> lines;
+	HoughLinesP(image, lines, 1, CV_PI/1, 90, 800, 2000 );
+
+	for( size_t i = 0; i < lines.size(); i++ )
 	{
-		cout << "File " << exampleSample << " cannot be accessed!";
+	  Vec4i l = lines[i];
+	  line(image, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(60,60,60), 5, CV_AA);
+	  cout<<"l[0]: "<<l[0] << endl;
+	  cout<<"l[1]: "<<l[1] << endl;
+	  cout<<"l[2]: "<<l[2] << endl;
+	  cout<<"l[3]: "<<l[3] << endl;
 	}
 
-	image = imread(exampleSample, 1);
-
-	cropImageIntoPieces(rectangles, image, numOfPieces);
-
-	for(int j = 0; j < numOfPieces; j++)
-	{
-		ofstream outputFile;
-		outputFile.open("mainOutput" + to_string(j), ios::out | ios::trunc);
-
-		//convert to grayscale
-		rectangles[j] = convertToGrayScale(rectangles[j]);
-
-		//rotate90
-		rectangles[j] = rotate90(rectangles[j]);
-
-		//convert to binary
-		rectangles[j] = convertToBinary(rectangles[j]);
-
-
-		countedBlacks = countBlackPixs(rectangles[j]);
-
-		for(int i = 0; i < rectangles[j].cols; i++)
-			outputFile << "" << i << ";" << countedBlacks[i] << ";" <<endl;
-		outputFile.close();
-
-		system((sysCmd + to_string(j)).c_str());
-	}
-
-system("rm mainOutput*");
-
-	//display chart
-	//rectangles[0] = drawChart(rectangles[0], countedBlacks, rectangles[0].cols);
-
+	cout<< "lines size: " <<lines.size() << endl;
+       
 	//display image
-	// namedWindow(windowName, CV_WINDOW_NORMAL);
-	// imshow(windowName, rectangles[0]);
+        //namedWindow(windowName, CV_WINDOW_NORMAL);
+        imshow(windowName, image);
 
-	// while(true)
-	// {
-	// 	int c;
-	// 	c = waitKey(20);
-	// 	if((char)c == 27)
-	// 		break;
-	// }
+	imwrite("resultImage.jpg", image);
 
-ifstream infile("foundPeaks.txt");
-
-//int *peaks = new int[numOfPieces];
-int peaks[numOfPieces][numOfPieces];
-
-int peaksNum = 0;
+        while(true)
+        {
+             int c;
+             c = waitKey(20);
+             if((char)c == 27)
+                     break;
+        }
 
 
-int counter = 0;
-while (infile >> peakNum )
-{
-	peaks[i] = peakNum;
-	counter++;
-}
+	
 
-
-for(int i = 0; i < numOfPieces; i++)
-{
-	for(int j = 0; j < numOfPieces; j++)
-	{
-		
-	}
-}
-
-delete[] rectangles;
 
 	return 0;
 }
