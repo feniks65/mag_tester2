@@ -216,11 +216,11 @@ int main(int argc, char **argv)
 	  cout<<"l[3]: "<<l[3] << endl;
 	}
 
-	cout<< "lines size: " <<lines.size() << endl;
+	cout<< exampleSample << " results " <<lines.size() << endl;
        
 	//display image
         //namedWindow(windowName, CV_WINDOW_NORMAL);
-        imshow(windowName, image);
+/*        imshow(windowName, image);
 
 	imwrite("resultImage.jpg", image);
 
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
              if((char)c == 27)
                      break;
         }
-
+*/
 
 	
 

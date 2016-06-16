@@ -85,19 +85,25 @@ pks = cutEdgeElements(peak_average, pks, yy)
 #filteredPksYs = cutEdgeElements(pksY)
 #filteredPksXs = 
 
+"""
 plt.plot(xx, yy)
 plt.ylabel('Number of black pixels in each column')
 plt.xlabel('Columns')
+"""
+
 
 print "PKS=",pks
 print "Liczba pksow=",len(pks)
 
+"""
 #drawing dots
 for index in pks:
 	plt.plot(index, yy[index], 'ro')
 
 
 plt.show()
+"""
+
 
 print "Number of peaks found=", len(pks)
 

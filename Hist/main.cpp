@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string>
+#include <vector>
 
 static const unsigned int Threshold = 180;
 
@@ -17,6 +18,29 @@ using namespace cv;
 Mat *rectangles;
 
 //image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
+
+int getPopularElement(int a[], int numOfPieces)
+{
+  int count = 1, tempCount;
+  int popular = a[0];
+  int temp = 0;
+  for (int i = 0; i < (numOfPieces - 1); i++)
+  {
+    temp = a[i];
+    tempCount = 0;
+    for (int j = 1; j < numOfPieces; j++)
+    {
+      if (temp == a[j])
+        tempCount++;
+    }
+    if (tempCount > count)
+    {
+      popular = temp;
+      count = tempCount;
+    }
+  }
+  return popular;
+}
 
 void cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 {
@@ -234,28 +258,22 @@ system("rm mainOutput*");
 
 ifstream infile("foundPeaks.txt");
 
-//int *peaks = new int[numOfPieces];
-int peaks[numOfPieces][numOfPieces];
+int *peaks = new int[numOfPieces];
 
-int peaksNum = 0;
-
+int peakNum;
 
 int counter = 0;
 while (infile >> peakNum )
 {
-	peaks[i] = peakNum;
+	peaks[counter] = peakNum;
 	counter++;
 }
 
+int frequent_element = getPopularElement(peaks, numOfPieces);
 
-for(int i = 0; i < numOfPieces; i++)
-{
-	for(int j = 0; j < numOfPieces; j++)
-	{
-		
-	}
-}
+cout << exampleSample << " results " << frequent_element << endl;
 
+delete[] peaks;
 delete[] rectangles;
 
 	return 0;
