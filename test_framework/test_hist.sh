@@ -24,10 +24,10 @@ then
 
 	for f in $PATH_TO_SAMPLES
 	do
-  		echo "Processing $f file..."
+#  		echo "Processing $f file..."
   		# take action on each file. $f store current file name
 		./tester_histogram $f $NUM_OF_PIECES | grep results >> $HIST_OUT 
+#		echo "./tester_histogram $f $NUM_OF_PIECES | grep results >> $HIST_OUT"
 	done
-	./tester_histogram $PATH_TO_SAMPLES
 
 fi
