@@ -193,6 +193,11 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
+	if(0 == isdigit(argv[1][0]))
+	{
+		cout << endl << "Second argument starts NOT with digit" << endl;
+	}
+
 	system("rm foundPeaks.txt");
 
 	const char *exampleSample = argv[1];//"../mag_tester/probki/SkanyRazem/dokument048.jpg";
