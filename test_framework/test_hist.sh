@@ -22,11 +22,11 @@ cp ../Hist/chart.py ./chart.py
 if [ -e tester_histogram ]
 then
 
-	for f in $PATH_TO_SAMPLES
+	for f in $1
 	do
 #  		echo "Processing $f file..."
   		# take action on each file. $f store current file name
-		./tester_histogram $f $NUM_OF_PIECES | grep results >> $HIST_OUT 
+		./tester_histogram $f $2 | grep results >> $HIST_OUT 
 #		echo "./tester_histogram $f $NUM_OF_PIECES | grep results >> $HIST_OUT"
 	done
 
