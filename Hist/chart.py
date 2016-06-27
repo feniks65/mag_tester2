@@ -18,7 +18,7 @@ def findpeaks(yy):
 	print cb.shape
 	#print numpy.arange(0, 3500).shape
 	print cb
-	peaks = peakutils.indexes(cb, thres=0.00005 * max(cb), min_dist=100)
+	peaks = peakutils.indexes(cb, thres=0.00005 * max(cb), min_dist=sys.argv[2])
 	#peaks = find_peaks_cwt(cb, numpy.arange(1, 100))
 
 	print "PEAKS=",peaks
@@ -41,6 +41,7 @@ def cutEdgeElements(average, peaksIndexes, yy):
 			counter = counter + 1
 	return peaksIndexes
 
+"""
 def getYsForIndexes(indexes, yy):
 	output = list()
 
@@ -48,13 +49,16 @@ def getYsForIndexes(indexes, yy):
 		output.append(yy[value])
 
 	return output
+"""
+
 
 def averageOfPeaks(peaksIndexes, yy):
 	average = 0
-	for index in peaksIndexes:
-		average += yy[index]
+	if 0 != len(peaksIndexes):
+		for index in peaksIndexes:
+			average += yy[index]
 
-	average = average / len(peaksIndexes)
+		average = average / len(peaksIndexes)
 	return average
 
 #main code

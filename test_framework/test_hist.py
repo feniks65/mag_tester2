@@ -6,15 +6,20 @@ import shutil
 
 pathToSamples = sys.argv[1]
 numOfPieces = sys.argv[2]
+rangeWidth = sys.argv[3]
 
-if True == os.path.exists("../Hist/tester_histogram"):
+if True == os.path.exists("../Hist/tester"):
 	shutil.copy("../Hist/tester", "./tester_histogram")
 
-if True == os.path.exists("../Hough/tester"):
-	shutil.copy("../Hough/tester", "tester_hough")
+if True == os.path.exists("../Hist/chart.py"):
+	shutil.copy("../Hist/chart.py", "./chart.py")
+
+
+if True == os.path.exists("temp_f"):
+	os.system("rm temp_f")
 
 for i in os.listdir(pathToSamples):
-	osCmd = "./tester_histogram " + pathToSamples + "/" + i + " " + numOfPieces + " > temp_f"
+	osCmd = "./tester_histogram " + pathToSamples + "/" + i + " " + numOfPieces + " " + rangeWidth +" > temp_f"
 	out = os.system(osCmd)
 	#print osCmd
 	

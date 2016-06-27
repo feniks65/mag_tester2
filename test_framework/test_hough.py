@@ -6,14 +6,15 @@ import shutil
 
 pathToSamples = sys.argv[1]
 
-if True == os.path.exists("../Hough/tester_hough"):
-	shutil.copy("../Hist/tester", "./tester_histogram")
-
 if True == os.path.exists("../Hough/tester"):
-	shutil.copy("../Hough/tester", "tester_hough")
+	shutil.copy("../Hough/tester", "./tester_hough")
+
+
+if True == os.path.exists("temp_f"):
+	os.system("rm temp_f")
 
 for i in os.listdir(pathToSamples):
-	osCmd = "./tester_histogram " + pathToSamples + "/" + i + " " + numOfPieces + " > temp_f"
+	osCmd = "./tester_hough " + pathToSamples + "/" + i + " > temp_f"
 	out = os.system(osCmd)
 	#print osCmd
 	

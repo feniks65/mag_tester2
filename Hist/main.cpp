@@ -19,6 +19,19 @@ Mat *rectangles;
 
 //image.at<Vec3b>(Point(x,y)) = color; //wstawia w x,y jakąś barwę
 
+int getMaxElement(int a[], int numOfPieces) {
+   
+    int max = a[0];
+    int tempMax;
+    for (int i = 1; i < (numOfPieces - 1); i++) {
+        tempMax = a[i];
+        if(tempMax > max) {
+            max = tempMax;
+        }
+    }
+    return max;   
+}
+
 int getPopularElement(int a[], int numOfPieces)
 {
   int count = 1, tempCount;
@@ -206,6 +219,7 @@ int main(int argc, char **argv)
 	Mat image;
 	int *countedBlacks = NULL;
 	int numOfPieces = atoi(argv[2]);
+	const char *rangeWidth = argv[3];
 	Mat *rectangles;
 	string sysCmd = "python chart.py mainOutput";
 
@@ -241,7 +255,7 @@ int main(int argc, char **argv)
 			outputFile << "" << i << ";" << countedBlacks[i] << ";" <<endl;
 		outputFile.close();
 
-		system((sysCmd + to_string(j)).c_str());
+		system((sysCmd + to_string(j) + " " + rangeWidth).c_str());
 	}
 
 system("rm mainOutput*");
@@ -274,7 +288,7 @@ while (infile >> peakNum )
 	counter++;
 }
 
-int frequent_element = getPopularElement(peaks, numOfPieces);
+int frequent_element = getMaxElement(peaks, numOfPieces);
 
 cout << exampleSample << " results " << frequent_element << endl;
 
