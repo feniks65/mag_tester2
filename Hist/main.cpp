@@ -212,6 +212,7 @@ int main(int argc, char **argv)
 	}
 
 	system("rm foundPeaks.txt");
+	system("rm figs/*");
 
 	const char *exampleSample = argv[1];//"../mag_tester/probki/SkanyRazem/dokument048.jpg";
 	const char *windowName = "probka";

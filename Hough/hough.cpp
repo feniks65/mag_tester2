@@ -10,7 +10,7 @@
 #include <string>
 
 
-static const unsigned int Threshold = 240;
+static const unsigned int Threshold = 250;
 
 using namespace std;
 using namespace cv;
@@ -29,24 +29,24 @@ void cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 
 	int width = input.cols;
 
-	cout << "width=" << width << endl;
+	//cout << "width=" << width << endl;
 
 	int height = input.rows;
 
-	cout << "height=" << height << endl;
+	//cout << "height=" << height << endl;
 
 	int rectangleWidth = input.cols / numOfPieces;
 
-	cout << "rectangleWidth=" << rectangleWidth << endl;
+	//cout << "rectangleWidth=" << rectangleWidth << endl;
 
 	int rectangleHeight = input.rows; // heigh of the input image
 
-	cout << "rectangleHeight=" << rectangleHeight << endl;
+	//cout << "rectangleHeight=" << rectangleHeight << endl;
 
 	int newRectXPosition = 0;
 	for(int i = 0; i < numOfPieces; i++)
 	{
-		cout << "newRectXPosition=" << newRectXPosition << endl;
+		//cout << "newRectXPosition=" << newRectXPosition << endl;
 		Rect newRect(newRectXPosition, 0, rectangleWidth, rectangleHeight);
 		Mat croppedRef(input, newRect);
 		croppedRef.copyTo(rectangles[i]);
@@ -84,6 +84,21 @@ void cropImageIntoPieces(Mat *rectangles, Mat input, int numOfPieces)
 
 //croppedRef.copyTo(cropped);
 }
+
+
+int getMaxElement(int a[], int numOfPieces) {
+   
+    int max = a[0];
+    int tempMax;
+    for (int i = 1; i < (numOfPieces - 1); i++) {
+        tempMax = a[i];
+        if(tempMax > max) {
+            max = tempMax;
+        }
+    }
+    return max;   
+}
+
 
 int* countBlackPixs(Mat inputImage)
 {
@@ -150,9 +165,9 @@ Mat threshold_output;
   /// Detect edges using Threshold
   threshold( outputImage, threshold_output, thresh, 255, THRESH_BINARY );
   /// Find contours
-  findContours( threshold_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+  findContours( threshold_output, contours, hierarchy, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 
-  cout<< "ilosc konturów: "<< contours.size() <<endl;
+  //cout<< "ilosc konturów: "<< contours.size() <<endl;
 
   /// Approximate contours to polygons + get bounding rects and circles
   vector<vector<Point> > contours_poly( contours.size() );
@@ -160,8 +175,8 @@ Mat threshold_output;
   vector<Point2f>center( contours.size() );
 
 
-  for( int i = 1; i < contours.size(); i++ )
-     { approxPolyDP( Mat(contours[i]), contours_poly[i], 1, true );
+  for( int i = 0; i < contours.size(); i++ )
+     { approxPolyDP( Mat(contours[i]), contours_poly[i], 1, false );
        boundRect[i] = boundingRect( Mat(contours_poly[i]) );
      }
 
@@ -173,18 +188,22 @@ drawing = Scalar(255,255,255);
     
 
   for( int i = 0; i< contours.size(); i++ )
-     {
-       Scalar color = Scalar(0,0,0);
-       int wysokosc = (boundRect[i].tl().y+boundRect[i].br().y)/2;
-       rectangle( drawing, Point(boundRect[i].tl().x,wysokosc-1), Point(boundRect[i].br().x+100,wysokosc+1), color, 5, 8 , 0 );
-//cout<< "tl: "<< boundRect[i].tl().x <<endl;
+	{
+		Scalar color = Scalar(0,0,0);
+		int wysokosc = (boundRect[i].tl().y+boundRect[i].br().y)/2;
+		//drawContours( drawing, contours_poly, i, color, 1, 8, vector<Vec4i>(), 0, Point() );
+		//if(boundRect[i].br().x - boundRect[i].tl().x > 50) {
+			line(drawing, Point(boundRect[i].tl().x,wysokosc), Point(boundRect[i].br().x,wysokosc), color, 1, 8, 0);
+			//rectangle( drawing, Point(boundRect[i].tl().x,wysokosc), Point(boundRect[i].br().x,wysokosc), color, -1, 8 , 0 );
+   		//}
+
+
 //cout<< "br: "<< boundRect[i].br().x <<endl;
 
 //cout<< "ilosc kolumns: "<< threshold_output.cols <<endl;
        //drawContours( drawing, contours_poly, i, color, CV_FILLED, 8, vector<Vec4i>(), 0, Point() );
        //rectangle(drawing, rect1, Scalar(255), CV_FILLED);
      }
-
 
 	return drawing;
 }
@@ -237,16 +256,75 @@ int main(int argc, char **argv)
 	}
 
 
-	Mat image1;
-	Mat original;
+	
 	const char *exampleSample = argv[1];
 	const char *windowName = "probka";
+	const int numOfPieces = atoi(argv[2]);
 	//namedWindow(windowName, CV_WINDOW_NORMAL);
 
-	image1 = imread(exampleSample, 1);
+	Mat image;
 
-	image1 = convertToGrayScale(image1);
+	image = imread(exampleSample, 1);
+	image = convertToGrayScale(image);
+	image = blur(image, 10);
+	//image = blur(image, 20);
+	//image = blur(image, 20);
 
+	image = convertToBinary(image);
+	image = convertByThreshold(image);
+
+
+	int *countedBlacks = NULL;
+
+	
+
+	Mat *rectangles;
+	rectangles = new Mat[numOfPieces];
+	cropImageIntoPieces(rectangles, image, numOfPieces);
+
+	countedBlacks = new int[numOfPieces];
+	int tempMeasurement = rectangles[0].cols / 2;
+	int countPiksel = 0;
+	for(int i = 0; i < numOfPieces; i++)
+	{
+
+
+		//cout<< "wys: "<< rectangles[i].rows <<endl;
+		//cout<< "szer: "<< rectangles[i].cols <<endl;
+		//cout<< "tempMeasurement: "<< tempMeasurement <<endl;
+
+		//image = convertToBinary(image);
+		rectangles[i] = convertToGrayScale(rectangles[i]);
+		//rectangles[i] = convertToBinary(rectangles[i]);
+		countedBlacks[i] = rectangles[i].rows - countNonZero(rectangles[i].col(tempMeasurement)) -1;
+		
+		//cout<< "countPiksel: "<< countPiksel-1 <<endl;
+
+		//tempMeasurement = tempMeasurement + rectangles[i].cols;
+
+		
+
+		/*namedWindow(windowName, CV_WINDOW_NORMAL);
+       imshow(windowName, rectangles[i]);
+		imwrite("resultImage.jpg", rectangles[i]);
+
+        while(true)
+        {
+            int c;
+             c = waitKey(20);
+             if((char)c == 27)
+                     break;
+        }*/
+
+
+	}
+	int frequent_element = getMaxElement(countedBlacks, numOfPieces);
+	cout<< "frequent_element: "<< frequent_element <<endl;
+
+
+/*
+	
+/*
 	imwrite("convertedToGrayscale.jpg", image1);
 	original = image1;
 	image1 = blur(image1, 20);
@@ -265,6 +343,11 @@ int main(int argc, char **argv)
 		image1 = blur(image1, 10);
 		image1 = convertToBinary(image1);
 		image1 = convertByThreshold(image1); 
+
+
+		
+
+
 	}
 	
 
@@ -297,7 +380,7 @@ int main(int argc, char **argv)
 		rectangles[j] = convertToBinary(rectangles[j]);
 		rectangles[j] = convertByThreshold(rectangles[j]); */
 
-
+/*
 	Canny(rectangles[j], image, 50, 200, 3);
  	cvtColor(image, dst, CV_GRAY2BGR);
 
@@ -425,7 +508,8 @@ int main(int argc, char **argv)
                      break;
         }*/
 
-	//outputImage1 = convertByThreshold(outputImage1); 
+	//outputImage1 = convertByThreshold(outputImage1);
+	/* 
 	imshow(windowName, rectangles[numOfPieces]);
 
 	imwrite("resultImage.jpg", rectangles[numOfPieces]);
@@ -436,7 +520,7 @@ int main(int argc, char **argv)
              c = waitKey(20);
              if((char)c == 27)
                      break;
-        }
+        }*/
 
 
 	return 0;

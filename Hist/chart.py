@@ -5,6 +5,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy
 import peakutils
+import os.path
 
 from scipy.signal import find_peaks_cwt
 
@@ -89,24 +90,31 @@ pks = cutEdgeElements(peak_average, pks, yy)
 #filteredPksYs = cutEdgeElements(pksY)
 #filteredPksXs = 
 
-"""
+
 plt.plot(xx, yy)
-plt.ylabel('Number of black pixels in each column')
+plt.ylabel('Number of black pixels in each column, peaksFound=' + str(len(pks)))
 plt.xlabel('Columns')
-"""
+
 
 
 print "PKS=",pks
 print "Liczba pksow=",len(pks)
 
-"""
+
 #drawing dots
 for index in pks:
 	plt.plot(index, yy[index], 'ro')
 
+counter = 0
 
-plt.show()
-"""
+figs_general_path = "figs/fig"
+
+while os.path.exists(figs_general_path + str(counter) + ".png") == True:
+	print "TEN MOJ PATH " + figs_general_path + str(counter)
+	counter = counter + 1
+
+plt.savefig("figs/fig" + str(counter))
+
 
 
 print "Number of peaks found=", len(pks)
